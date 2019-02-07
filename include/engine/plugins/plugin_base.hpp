@@ -296,7 +296,9 @@ class BasePlugin
                             *parameters.radiuses[i],
                             parameters.bearings[i]->bearing,
                             parameters.bearings[i]->range,
-                            approach);
+                            approach,
+                            parameters.min_stoppage_penalty,
+                            parameters.max_stoppage_penalty);
                 }
                 else
                 {
@@ -305,7 +307,9 @@ class BasePlugin
                             parameters.coordinates[i],
                             parameters.bearings[i]->bearing,
                             parameters.bearings[i]->range,
-                            approach);
+                            approach,
+                            parameters.min_stoppage_penalty,
+                            parameters.max_stoppage_penalty);
                 }
             }
             else
@@ -314,13 +318,20 @@ class BasePlugin
                 {
                     phantom_node_pairs[i] =
                         facade.NearestPhantomNodeWithAlternativeFromBigComponent(
-                            parameters.coordinates[i], *parameters.radiuses[i], approach);
+                            parameters.coordinates[i],
+                            *parameters.radiuses[i],
+                            approach,
+                            parameters.min_stoppage_penalty,
+                            parameters.max_stoppage_penalty);
                 }
                 else
                 {
                     phantom_node_pairs[i] =
                         facade.NearestPhantomNodeWithAlternativeFromBigComponent(
-                            parameters.coordinates[i], approach);
+                            parameters.coordinates[i],
+                            approach,
+                            parameters.min_stoppage_penalty,
+                            parameters.max_stoppage_penalty);
                 }
             }
 
