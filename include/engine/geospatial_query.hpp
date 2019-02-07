@@ -427,6 +427,10 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
     PhantomNodeWithDistance MakePhantomNode(const util::Coordinate input_coordinate,
                                             const EdgeData &data) const
     {
+        // TODO: pass these into this function from table_parameters
+        const double min_stoppage_penalty = 0;
+        const double max_stoppage_penalty = 0;
+
         util::Coordinate point_on_segment;
         double ratio;
         const auto current_perpendicular_distance =
@@ -464,16 +468,22 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
                             forward_durations.begin() + data.fwd_segment_position,
                             EdgeDuration{0});
 
-        EdgeDistance forward_distance_offset = 0;
-        // Sum up the distance from the start to the fwd_segment_position
-        for (auto current = forward_geometry.begin();
-             current < forward_geometry.begin() + data.fwd_segment_position;
-             ++current)
-        {
-            forward_distance_offset += util::coordinate_calculation::fccApproximateDistance(
-                datafacade.GetCoordinateOfNode(*current),
-                datafacade.GetCoordinateOfNode(*std::next(current)));
-        }
+        // For measuring distance
+        const auto appx_distance = [this](decltype(forward_geometry.begin()) begin,
+                                          decltype(forward_geometry.begin()) end) {
+            EdgeDistance dist = 0;
+            while (begin != end)
+            {
+                dist += util::coordinate_calculation::fccApproximateDistance(
+                    datafacade.GetCoordinateOfNode(*begin),
+                    datafacade.GetCoordinateOfNode(*std::next(begin)));
+                ++begin;
+            }
+            return dist;
+        };
+
+        EdgeDistance forward_distance_offset = appx_distance(
+            forward_geometry.begin(), forward_geometry.begin() + data.fwd_segment_position);
 
         BOOST_ASSERT(data.fwd_segment_position <
                      std::distance(forward_durations.begin(), forward_durations.end()));
@@ -494,16 +504,9 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
                             reverse_durations.end() - data.fwd_segment_position - 1,
                             EdgeDuration{0});
 
-        EdgeDistance reverse_distance_offset = 0;
-        // Sum up the distance from just after the fwd_segment_position to the end
-        for (auto current = forward_geometry.begin() + data.fwd_segment_position + 1;
-             current != std::prev(forward_geometry.end());
-             ++current)
-        {
-            reverse_distance_offset += util::coordinate_calculation::fccApproximateDistance(
-                datafacade.GetCoordinateOfNode(*current),
-                datafacade.GetCoordinateOfNode(*std::next(current)));
-        }
+        EdgeDistance reverse_distance_offset =
+            appx_distance(forward_geometry.begin() + data.fwd_segment_position + 1,
+                          std::prev(forward_geometry.end()));
 
         EdgeWeight reverse_weight =
             reverse_weights[reverse_weights.size() - data.fwd_segment_position - 1];
@@ -513,16 +516,61 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
             point_on_segment,
             datafacade.GetCoordinateOfNode(forward_geometry(data.fwd_segment_position + 1)));
 
+        // where does this speed lie with respect to the min/max penalizable speeds
+        auto penalty_range = max_stoppage_penalty - min_stoppage_penalty;
+        auto stoppage_penalty =
+            [penalty_range, min_stoppage_penalty, max_stoppage_penalty](double speed) -> double {
+            // You're so slow already you don't get a penalty
+            if (speed < MINIMAL_ACCEL_DECEL_PENALIZABLE_SPEED)
+                return 0;
+
+            // Find where it is on the scale
+            constexpr auto max =
+                MAXIMAL_ACCEL_DECEL_PENALIZABLE_SPEED - MINIMAL_ACCEL_DECEL_PENALIZABLE_SPEED;
+            auto ratio = (speed - MINIMAL_ACCEL_DECEL_PENALIZABLE_SPEED) / max;
+
+            // You're faster than the max so you get the max
+            if (ratio >= 1)
+                return max_stoppage_penalty;
+
+            // You're in between so you get a linear combination
+            return min_stoppage_penalty + ratio * penalty_range;
+        };
+
+        // We may end up adding a stoppage penalty
+        EdgeDuration forward_stoppage_penalty = 0;
+        EdgeDuration reverse_stoppage_penalty = 0;
+        auto total_distance = penalty_range > 0
+                                  ? appx_distance(forward_geometry.begin(), forward_geometry.end())
+                                  : 0.0;
         ratio = std::min(1.0, std::max(0.0, ratio));
         if (data.forward_segment_id.id != SPECIAL_SEGMENTID)
         {
             forward_weight = static_cast<EdgeWeight>(forward_weight * ratio);
             forward_duration = static_cast<EdgeDuration>(forward_duration * ratio);
+            // Stoppage penalty based on speed
+            if (data.forward_segment_id.enabled && penalty_range > 0)
+            {
+                const auto total_duration = std::accumulate(
+                    forward_durations.begin(), forward_durations.begin(), EdgeDuration{0});
+                const auto speed = total_distance / total_duration;
+                forward_stoppage_penalty =
+                    static_cast<EdgeDuration>((stoppage_penalty(speed) * 10) + .5);
+            }
         }
         if (data.reverse_segment_id.id != SPECIAL_SEGMENTID)
         {
             reverse_weight -= static_cast<EdgeWeight>(reverse_weight * ratio);
             reverse_duration -= static_cast<EdgeDuration>(reverse_duration * ratio);
+            // Stoppage penalty based on speed
+            if (data.reverse_segment_id.enabled && penalty_range > 0)
+            {
+                const auto total_duration = std::accumulate(
+                    reverse_durations.begin(), reverse_durations.begin(), EdgeDuration{0});
+                const auto speed = total_distance / total_duration;
+                reverse_stoppage_penalty =
+                    static_cast<EdgeDuration>((stoppage_penalty(speed) * 10) + .5);
+            }
         }
 
         // check phantom node segments validity
@@ -549,8 +597,8 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
                         reverse_distance,
                         forward_distance_offset,
                         reverse_distance_offset,
-                        forward_duration,
-                        reverse_duration,
+                        forward_duration + forward_stoppage_penalty,
+                        reverse_duration + reverse_stoppage_penalty,
                         forward_duration_offset,
                         reverse_duration_offset,
                         is_forward_valid_source,
@@ -703,7 +751,7 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
     const CoordinateList &coordinates;
     DataFacadeT &datafacade;
 };
-}
-}
+} // namespace engine
+} // namespace osrm
 
 #endif

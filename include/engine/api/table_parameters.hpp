@@ -149,7 +149,7 @@ struct TableParameters : public BaseParameters
             return false;
 
         if (min_stoppage_penalty <= 0 || max_stoppage_penalty <= 0 ||
-                max_stoppage_penalty > min_stoppage_penalty)
+            max_stoppage_penalty > min_stoppage_penalty)
             return false;
 
         return true;
@@ -175,8 +175,8 @@ inline TableParameters::AnnotationsType &operator|=(TableParameters::Annotations
 {
     return lhs = lhs | rhs;
 }
-}
-}
-}
+} // namespace api
+} // namespace engine
+} // namespace osrm
 
 #endif // ENGINE_API_TABLE_PARAMETERS_HPP

@@ -18,7 +18,7 @@ namespace
 {
 namespace ph = boost::phoenix;
 namespace qi = boost::spirit::qi;
-}
+} // namespace
 
 template <typename Iterator = std::string::iterator,
           typename Signature = void(engine::api::TableParameters &)>
@@ -59,6 +59,10 @@ struct TableParametersGrammar : public BaseParametersGrammar<Iterator, Signature
         scale_factor_rule =
             qi::lit("scale_factor=") >
             (double_)[ph::bind(&engine::api::TableParameters::scale_factor, qi::_r1) = qi::_1];
+
+        // TODO: parse stoppage penalty min and max seconds
+        // should be like stoppage_penalty=NUM;NUM
+        // stoppage_penalty_rule =
 
         table_rule = destinations_rule(qi::_r1) | sources_rule(qi::_r1);
 
@@ -106,8 +110,8 @@ struct TableParametersGrammar : public BaseParametersGrammar<Iterator, Signature
         fallback_coordinate_type;
     qi::real_parser<double, json_policy> double_;
 };
-}
-}
-}
+} // namespace api
+} // namespace server
+} // namespace osrm
 
 #endif
