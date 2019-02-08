@@ -26,6 +26,10 @@ Feature: Car - Acceleration profiles
             | from | to | route | time   |
             | b    | a  | ab,ab | 609.9s |
 
+        When I route I should get
+            | from | to | route | time |
+            | a    | a  | ab,ab | 0s   |
+
         When I request a travel time matrix I should get
             |   | a     | b     |
             | a | 0     | 481.1 |
