@@ -387,11 +387,11 @@ class ContiguousInternalMemoryDataFacadeBase : public BaseDataFacade
             input_coordinate, max_results, max_distance, bearing, bearing_range, approach);
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
-                                                      const Approach approach,
-                                                      const double minimum_stoppage_penalty,
-                                                      const double maximum_stoppage_penalty) const override final
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate input_coordinate,
+        const Approach approach,
+        const double minimum_stoppage_penalty,
+        const double maximum_stoppage_penalty) const override final
     {
         BOOST_ASSERT(m_geospatial_query.get());
 
@@ -399,46 +399,61 @@ class ContiguousInternalMemoryDataFacadeBase : public BaseDataFacade
             input_coordinate, approach, minimum_stoppage_penalty, maximum_stoppage_penalty);
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
-                                                      const double max_distance,
-                                                      const Approach approach,
-                                                      const double minimum_stoppage_penalty,
-                                                      const double maximum_stoppage_penalty) const override final
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate input_coordinate,
+        const double max_distance,
+        const Approach approach,
+        const double minimum_stoppage_penalty,
+        const double maximum_stoppage_penalty) const override final
     {
         BOOST_ASSERT(m_geospatial_query.get());
 
         return m_geospatial_query->NearestPhantomNodeWithAlternativeFromBigComponent(
-            input_coordinate, max_distance, approach, minimum_stoppage_penalty, maximum_stoppage_penalty);
+            input_coordinate,
+            max_distance,
+            approach,
+            minimum_stoppage_penalty,
+            maximum_stoppage_penalty);
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
-                                                      const double max_distance,
-                                                      const int bearing,
-                                                      const int bearing_range,
-                                                      const Approach approach,
-                                                      const double minimum_stoppage_penalty,
-                                                      const double maximum_stoppage_penalty) const override final
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate input_coordinate,
+        const double max_distance,
+        const int bearing,
+        const int bearing_range,
+        const Approach approach,
+        const double minimum_stoppage_penalty,
+        const double maximum_stoppage_penalty) const override final
     {
         BOOST_ASSERT(m_geospatial_query.get());
 
         return m_geospatial_query->NearestPhantomNodeWithAlternativeFromBigComponent(
-            input_coordinate, max_distance, bearing, bearing_range, approach, minimum_stoppage_penalty, maximum_stoppage_penalty);
+            input_coordinate,
+            max_distance,
+            bearing,
+            bearing_range,
+            approach,
+            minimum_stoppage_penalty,
+            maximum_stoppage_penalty);
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
-                                                      const int bearing,
-                                                      const int bearing_range,
-                                                      const Approach approach,
-                                                      const double minimum_stoppage_penalty,
-                                                      const double maximum_stoppage_penalty) const override final
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate input_coordinate,
+        const int bearing,
+        const int bearing_range,
+        const Approach approach,
+        const double minimum_stoppage_penalty,
+        const double maximum_stoppage_penalty) const override final
     {
         BOOST_ASSERT(m_geospatial_query.get());
 
         return m_geospatial_query->NearestPhantomNodeWithAlternativeFromBigComponent(
-            input_coordinate, bearing, bearing_range, approach, minimum_stoppage_penalty, maximum_stoppage_penalty);
+            input_coordinate,
+            bearing,
+            bearing_range,
+            approach,
+            minimum_stoppage_penalty,
+            maximum_stoppage_penalty);
     }
 
     std::uint32_t GetCheckSum() const override final { return m_check_sum; }

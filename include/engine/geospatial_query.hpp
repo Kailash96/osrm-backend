@@ -542,7 +542,10 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
             datafacade.GetCoordinateOfNode(forward_geometry(data.fwd_segment_position + 1)));
 
         // where does this speed lie with respect to the min/max penalizable speeds
-        auto penalty_range = max_stoppage_penalty - min_stoppage_penalty;
+        auto penalty_range = min_stoppage_penalty != INVALID_MINIMUM_STOPPAGE_PENALTY &&
+                                     max_stoppage_penalty != INVALID_MAXIMUM_STOPPAGE_PENALTY
+                                 ? max_stoppage_penalty - min_stoppage_penalty
+                                 : 0;
         auto stoppage_penalty =
             [penalty_range, min_stoppage_penalty, max_stoppage_penalty](double speed) -> double {
             // You're so slow already you don't get a penalty
@@ -622,10 +625,12 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
                         reverse_distance,
                         forward_distance_offset,
                         reverse_distance_offset,
-                        forward_duration + forward_stoppage_penalty,
-                        reverse_duration + reverse_stoppage_penalty,
+                        forward_duration,
+                        reverse_duration,
                         forward_duration_offset,
                         reverse_duration_offset,
+                        forward_stoppage_penalty,
+                        reverse_stoppage_penalty,
                         is_forward_valid_source,
                         is_forward_valid_target,
                         is_reverse_valid_source,

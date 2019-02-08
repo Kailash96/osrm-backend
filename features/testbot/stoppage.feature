@@ -20,9 +20,13 @@ Feature: Testbot - Acceleration profiles
 
         When I route I should get
             | from | to | route | time   |
-            | a    | b  | ab,ab | 475.8s |
+            | a    | b  | ab,ab | 412.3s |
+
+        When I route I should get
+            | from | to | route | time   |
+            | b    | a  | ab,ab | 505.9s |
 
         When I request a travel time matrix I should get
             |   | a     | b     |
-            | a | 0     | 449.0 |
-            | b | 449.0 | 0     |
+            | a | 0     | 412.3 |
+            | b | 505.9 | 0     |
