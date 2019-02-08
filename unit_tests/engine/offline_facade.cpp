@@ -282,36 +282,44 @@ class ContiguousInternalMemoryDataFacade<routing_algorithms::offline::Algorithm>
         return {};
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate /*input_coordinate*/,
-                                                      const Approach /*approach*/) const override
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate /*input_coordinate*/,
+        const Approach /*approach*/,
+        const double /* min_stoppage_penalty */,
+        const double /* max_stoppage_penalty */) const override
     {
         return {};
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate /*input_coordinate*/,
-                                                      const double /*max_distance*/,
-                                                      const Approach /*approach*/) const override
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate /*input_coordinate*/,
+        const double /*max_distance*/,
+        const Approach /*approach*/,
+        const double /* min_stoppage_penalty */,
+        const double /* max_stoppage_penalty */) const override
     {
         return {};
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate /*input_coordinate*/,
-                                                      const double /*max_distance*/,
-                                                      const int /*bearing*/,
-                                                      const int /*bearing_range*/,
-                                                      const Approach /*approach*/) const override
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate /*input_coordinate*/,
+        const double /*max_distance*/,
+        const int /*bearing*/,
+        const int /*bearing_range*/,
+        const Approach /*approach*/,
+        const double /* min_stoppage_penalty */,
+        const double /* max_stoppage_penalty */) const override
     {
         return {};
     }
 
-    std::pair<PhantomNode, PhantomNode>
-    NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate /*input_coordinate*/,
-                                                      const int /*bearing*/,
-                                                      const int /*bearing_range*/,
-                                                      const Approach /*approach*/) const override
+    std::pair<PhantomNode, PhantomNode> NearestPhantomNodeWithAlternativeFromBigComponent(
+        const util::Coordinate /*input_coordinate*/,
+        const int /*bearing*/,
+        const int /*bearing_range*/,
+        const Approach /*approach*/,
+        const double /* min_stoppage_penalty */,
+        const double /* max_stoppage_penalty */) const override
     {
         return {};
     }
