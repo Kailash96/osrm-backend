@@ -135,7 +135,7 @@ struct BaseParametersGrammar : boost::spirit::qi::grammar<Iterator, Signature>
                                            },
                                            qi::_1)];
 
-        stoppage_rule = qi::lit("stoppage_penalty") >
+        stoppage_rule = qi::lit("stoppage_penalty=") >
                         (qi::double_ > ',' > qi::double_)[ph::bind(
                             [](engine::api::BaseParameters &params, double min, double max) {
                                 params.min_stoppage_penalty = min;
