@@ -205,7 +205,9 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
     std::pair<PhantomNode, PhantomNode>
     NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
                                                       const double max_distance,
-                                                      const Approach approach) const
+                                                      const Approach approach,
+                                                      const double min_stoppage_penalty,
+                                                      const double max_stoppage_penalty) const
     {
         bool has_small_component = false;
         bool has_big_component = false;
@@ -243,15 +245,22 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
         }
 
         BOOST_ASSERT(results.size() == 1 || results.size() == 2);
-        return std::make_pair(MakePhantomNode(input_coordinate, results.front()).phantom_node,
-                              MakePhantomNode(input_coordinate, results.back()).phantom_node);
+        return std::make_pair(
+            MakePhantomNode(
+                input_coordinate, results.front(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node,
+            MakePhantomNode(
+                input_coordinate, results.back(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node);
     }
 
     // Returns the nearest phantom node. If this phantom node is not from a big component
     // a second phantom node is return that is the nearest coordinate in a big component.
     std::pair<PhantomNode, PhantomNode>
     NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
-                                                      const Approach approach) const
+                                                      const Approach approach,
+                                                      const double min_stoppage_penalty,
+                                                      const double max_stoppage_penalty) const
     {
         bool has_small_component = false;
         bool has_big_component = false;
@@ -288,8 +297,13 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
         }
 
         BOOST_ASSERT(results.size() == 1 || results.size() == 2);
-        return std::make_pair(MakePhantomNode(input_coordinate, results.front()).phantom_node,
-                              MakePhantomNode(input_coordinate, results.back()).phantom_node);
+        return std::make_pair(
+            MakePhantomNode(
+                input_coordinate, results.front(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node,
+            MakePhantomNode(
+                input_coordinate, results.back(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node);
     }
 
     // Returns the nearest phantom node. If this phantom node is not from a big component
@@ -298,7 +312,9 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
     NearestPhantomNodeWithAlternativeFromBigComponent(const util::Coordinate input_coordinate,
                                                       const int bearing,
                                                       const int bearing_range,
-                                                      const Approach approach) const
+                                                      const Approach approach,
+                                                      const double min_stoppage_penalty,
+                                                      const double max_stoppage_penalty) const
     {
         bool has_small_component = false;
         bool has_big_component = false;
@@ -345,8 +361,13 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
         }
 
         BOOST_ASSERT(results.size() > 0);
-        return std::make_pair(MakePhantomNode(input_coordinate, results.front()).phantom_node,
-                              MakePhantomNode(input_coordinate, results.back()).phantom_node);
+        return std::make_pair(
+            MakePhantomNode(
+                input_coordinate, results.front(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node,
+            MakePhantomNode(
+                input_coordinate, results.back(), min_stoppage_penalty, max_stoppage_penalty)
+                .phantom_node);
     }
 
     // Returns the nearest phantom node. If this phantom node is not from a big component
@@ -356,7 +377,9 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
                                                       const double max_distance,
                                                       const int bearing,
                                                       const int bearing_range,
-                                                      const Approach approach) const
+                                                      const Approach approach,
+                                                      const double min_stoppage_penalty,
+                                                      const double max_stoppage_penalty) const
     {
         bool has_small_component = false;
         bool has_big_component = false;
@@ -405,8 +428,8 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
         }
 
         BOOST_ASSERT(results.size() > 0);
-        return std::make_pair(MakePhantomNode(input_coordinate, results.front()).phantom_node,
-                              MakePhantomNode(input_coordinate, results.back()).phantom_node);
+        return std::make_pair(MakePhantomNode(input_coordinate, results.front(),min_stoppage_penalty,max_stoppage_penalty).phantom_node,
+                              MakePhantomNode(input_coordinate, results.back(),min_stoppage_penalty,max_stoppage_penalty).phantom_node);
     }
 
   private:
@@ -425,12 +448,10 @@ template <typename RTreeT, typename DataFacadeT> class GeospatialQuery
     }
 
     PhantomNodeWithDistance MakePhantomNode(const util::Coordinate input_coordinate,
-                                            const EdgeData &data) const
+                                            const EdgeData &data,
+                                            const double min_stoppage_penalty = 0,
+                                            const double max_stoppage_penalty = 0) const
     {
-        // TODO: pass these into this function from table_parameters
-        const double min_stoppage_penalty = 0;
-        const double max_stoppage_penalty = 0;
-
         util::Coordinate point_on_segment;
         double ratio;
         const auto current_perpendicular_distance =

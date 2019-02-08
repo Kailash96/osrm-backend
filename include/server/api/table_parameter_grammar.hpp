@@ -60,10 +60,6 @@ struct TableParametersGrammar : public BaseParametersGrammar<Iterator, Signature
             qi::lit("scale_factor=") >
             (double_)[ph::bind(&engine::api::TableParameters::scale_factor, qi::_r1) = qi::_1];
 
-        // TODO: parse stoppage penalty min and max seconds
-        // should be like stoppage_penalty=NUM;NUM
-        // stoppage_penalty_rule =
-
         table_rule = destinations_rule(qi::_r1) | sources_rule(qi::_r1);
 
         root_rule = BaseGrammar::query_rule(qi::_r1) > -qi::lit(".json") >

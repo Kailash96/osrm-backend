@@ -118,10 +118,10 @@ static const EdgeDistance MAXIMAL_EDGE_DISTANCE = std::numeric_limits<EdgeDistan
 static const TurnPenalty INVALID_TURN_PENALTY = std::numeric_limits<TurnPenalty>::max();
 static const EdgeDistance INVALID_EDGE_DISTANCE = std::numeric_limits<EdgeDistance>::max();
 static const EdgeDistance INVALID_FALLBACK_SPEED = std::numeric_limits<EdgeDistance>::max();
-constexpr EdgeDuration INVALID_MINIMUM_STOPAGE_PENALTY = std::numeric_limits<EdgeDuration>::max();
-constexpr EdgeDuration INVALID_MAXIMUM_STOPAGE_PENALTY = std::numeric_limits<EdgeDuration>::max();
-constexpr double MINIMAL_ACCEL_DECEL_PENALIZABLE_SPEED = 10;
-constexpr double MAXIMAL_ACCEL_DECEL_PENALIZABLE_SPEED = 40;
+constexpr EdgeDuration INVALID_MINIMUM_STOPPAGE_PENALTY = std::numeric_limits<EdgeDuration>::max();
+constexpr EdgeDuration INVALID_MAXIMUM_STOPPAGE_PENALTY = std::numeric_limits<EdgeDuration>::max();
+constexpr double MINIMAL_ACCEL_DECEL_PENALIZABLE_SPEED = 2.7;  // metres/second == 10km/h
+constexpr double MAXIMAL_ACCEL_DECEL_PENALIZABLE_SPEED = 11.1; // metres/sec == 40km/h
 
 // FIXME the bitfields we use require a reduced maximal duration, this should be kept consistent
 // within the code base. For now we have to ensure that we don't case 30 bit to -1 and break any
