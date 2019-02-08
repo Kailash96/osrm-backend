@@ -12,8 +12,8 @@ Feature: Testbot - Acceleration profiles
             """
 
         And the ways
-            | nodes | highway | maxspeed    |
-            | ab    | trunk   | 60          |
+            | nodes | highway | maxspeed:forward    | maxspeed:backward |
+            | ab    | trunk   | 60                  | 45                |
 
         And the query options
             | stoppage_penalty | 5,100   |
