@@ -724,19 +724,17 @@ inline bool argumentsToParameter(const Nan::FunctionCallbackInfo<v8::Value> &arg
 
         if (min < 0 || max < 0)
         {
-            {
-                Nan::ThrowError("Stoppage penalty min/max can't be less than zero");
-                return false;
-            }
-            if (max < min)
-            {
-                Nan::ThrowError("Stoppage penalty max must be larger than min");
-                return false;
-            }
-
-            params->max_stoppage_penalty = min;
-            params->min_stoppage_penalty = max;
+            Nan::ThrowError("Stoppage penalty min/max can't be less than zero");
+            return false;
         }
+        if (max < min)
+        {
+            Nan::ThrowError("Stoppage penalty max must be larger than min");
+            return false;
+        }
+
+        params->max_stoppage_penalty = max;
+        params->min_stoppage_penalty = min;
     }
 
     return true;
